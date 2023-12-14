@@ -1,3 +1,3 @@
 # SONew
 
-Code coming up by November end, 2023. Stay tuned!
+Code coming up by December end, 2023. Stay tuned!
