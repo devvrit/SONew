@@ -1,0 +1,41 @@
+experiment_name: autoencoder_tds_nni
+search_space:
+  base_lr:
+    _type: loguniform
+    _value: [ 0.0000001, 10]
+  momentum:
+    _type: loguniform
+    _value: [ 0.001, 0.1 ]
+  eps:
+    _type: loguniform
+    _value: [ 0.0000000001,0.01 ]
+  opt_name:
+    _type: choice
+    _value: ['tds']
+  stat_decay:
+    _type: loguniform
+    _value: [ 0.001, 0.1 ]
+
+trial_command: "export CUDA_VISIBLE_DEVICES='0'; python pytorch_autoencoder_nni.py"
+trial_code_directory: ./
+
+trial_concurrency: 4
+max_trial_number: 600
+
+tuner:
+  code_directory: .
+  class_name: seeded_tuner.SeededTuner
+  class_args:
+    seed: 0
+    algorithm_name: anneal
+    optimize_mode: minimize
+
+assessor:
+    name: Medianstop
+    classArgs:
+      optimize_mode: minimize
+      start_step: 30
+
+
+training_service:
+  platform: local

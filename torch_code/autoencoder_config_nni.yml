@@ -1,0 +1,53 @@
+experiment_name: autoencoder_kfac_nni
+search_space:
+  base_lr:
+    _type: loguniform
+    _value: [ 0.00001, 1.0]
+  momentum:
+    _type: loguniform
+    _value: [ 0.001, 0.7 ]
+  opt_name:
+    _type: choice
+    _value: ['sgd']
+  kfac_name:
+    _type: choice
+    _value: ['kfac']
+  stat_decay:
+    _type: loguniform
+    _value: [ 0.001, 0.7 ]
+  # damping:
+  #   _type: loguniform
+  #   _value: [ 0.0001, 1.0 ]
+  # kl_clip:
+  #   _type: loguniform
+  #   _value: [ 0.00001, 1.0 ]
+  damping:
+    _type: choice
+    _value: [ 0.03 ]
+  kl_clip:
+    _type: choice
+    _value: [ 0.001 ]
+
+trial_command: "export CUDA_VISIBLE_DEVICES='0'; python pytorch_autoencoder_nni.py"
+trial_code_directory: ./
+
+trial_concurrency: 4
+max_trial_number: 600
+
+tuner:
+  code_directory: .
+  class_name: seeded_tuner.SeededTuner
+  class_args:
+    seed: 0
+    algorithm_name: anneal
+    optimize_mode: minimize
+
+assessor:
+    name: Medianstop
+    classArgs:
+      optimize_mode: minimize
+      start_step: 30
+
+
+training_service:
+  platform: local
